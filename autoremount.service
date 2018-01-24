@@ -1,0 +1,13 @@
+[Unit]
+Description=Auto Remount Service
+After=autofs.service
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/
+ExecStart=/sbin/autoremount
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target
