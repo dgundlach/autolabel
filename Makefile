@@ -27,7 +27,7 @@ install: $(TARGETS)
 	install -m 0755 $(TARGETS) $(DESTDIR)$(SBINDIR)
 
 clean:
-	rm -f *.o $(TARGETS)
+	rm -f $(BINDIR)/*.o $(TARGETS)
 
 $(AUTOREMOUNT): $(AUTOREMOUNT_OBJS)
 	$(CC) -o $@ $^ $(AUTOREMOUNT_LIBS)
