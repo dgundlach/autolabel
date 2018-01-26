@@ -12,6 +12,8 @@
 #include "configure.h"
 #include "remount.h"
 
+// aaa
+
 int main(int argc, char **argv, char **env) {
 
   char *label;
