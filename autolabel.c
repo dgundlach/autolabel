@@ -71,7 +71,7 @@ int main(int argc, char **argv, char **env) {
        */
 
       chdir(mO->dir);
-      d = open(label);
+      d = open(label, O_RDONLY);
       close(d);
       chdir(wd);
       remount(label, mO->dir);
