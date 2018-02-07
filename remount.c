@@ -98,7 +98,7 @@ int remount (char *mountPoint, char *dir) {
   return rc;
 }
 
-int mounted(char *device) {
+int devMounted(char *device) {
 
   FILE *mounts;
   struct mntent *ent;

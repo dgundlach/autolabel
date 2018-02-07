@@ -1,2 +1,2 @@
 int remount (char *mountPoint, char *dir);
-int mounted(char *device);
+int devMounted(char *device);
