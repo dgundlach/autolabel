@@ -1,5 +1,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <dirent.h>
 #include <unistd.h>
 #include <limits.h>
 #include <stdlib.h>
@@ -28,6 +29,7 @@ int main(int argc, char **argv, char **env) {
   char *options;
   char *defaultOpts;
   struct stat st;
+  DIR *d;
 
   if (argc != 2) exit(1);
   label = argv[1];
@@ -63,6 +65,16 @@ int main(int argc, char **argv, char **env) {
       break;
     }
     if (!strcmp(wd, mO->peerDir)) {
+
+      /*
+       * Make sure that the peer is mounted before remounting it read-write.
+       */
+
+      byLabelPath = malloc(strlen(mO->dir) + strlen(label) + 2);
+      sprintf(byLabelPath, "%s/%s", mO->dir, label);
+      d = opendir(byLabelPath);
+      closedir(d);
+      free(byLabelPath);
       remount(label, mO->dir);
       break;
     }
