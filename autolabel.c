@@ -69,7 +69,7 @@ int main(int argc, char **argv, char **env) {
        * Make sure that the peer is mounted before remounting it read-write.
        */
 
-      chdir(mO->peerDir);
+      chdir(mO->dir);
       d = open(label);
       close(d);
       chdir(wd);
