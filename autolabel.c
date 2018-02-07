@@ -30,11 +30,10 @@ int main(int argc, char **argv, char **env) {
   char *options;
   char *defaultOpts;
   struct stat st;
-  int d;
 
   if (argc != 2) exit(1);
   label = argv[1];
-  wd = get_current_dir();
+  wd = get_current_dir_name();
 
   configure(&fsOpts, &mountOpts);
 
