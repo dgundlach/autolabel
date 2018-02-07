@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -16,7 +17,7 @@
 int main(int argc, char **argv, char **env) {
 
   char *label;
-  char *byLabelPath;
+  char *path;
   char *devPath;
   const char *fsType;
   char *mountFSType;
@@ -24,7 +25,7 @@ int main(int argc, char **argv, char **env) {
   mount_opts *mountOpts = NULL;
   fs_opts *fO = NULL;
   mount_opts *mO = NULL;
-  char wd[PATH_MAX];
+  char *wd;
   char *ro = "";
   char *options;
   char *defaultOpts;
@@ -33,7 +34,7 @@ int main(int argc, char **argv, char **env) {
 
   if (argc != 2) exit(1);
   label = argv[1];
-  getcwd(wd, PATH_MAX);
+  wd = get_current_dir();
 
   configure(&fsOpts, &mountOpts);
 
@@ -41,13 +42,11 @@ int main(int argc, char **argv, char **env) {
    * Get the corresponding device for the label.
    */
 
-  byLabelPath = malloc(sizeof(DEV_DISK_BY_LABEL) + 2 + NAME_MAX);
-  sprintf(byLabelPath, DEV_DISK_BY_LABEL"%s", label);
-  if (!(devPath = realpath(byLabelPath, NULL))) {
-    devPath = malloc(NAME_MAX + 6);
-    sprintf(devPath, "/dev/%s", label);
+  asprintf(&path, DEV_DISK_BY_LABEL"%s", label);
+  if (!(devPath = realpath(path, NULL))) {
+    asprintf(&devPath, "/dev/%s", label);
   }
-  free(byLabelPath);
+  free(path);
 
   if (stat(devPath, &st) == -1) {
     exit(1);
@@ -61,19 +60,19 @@ int main(int argc, char **argv, char **env) {
   mO = mountOpts;
   while (mO) {
     if (!strcmp(wd, mO->dir) && strcmp(mO->peerDir, "*")) {
-      ro = ",ro";
+      asprintf(&path, "%s/%s", mO->peerDir, label);
+
+      /*
+       * If the drive is mounted read-write, don't try to mount it read-only.
+       */
+
+      if (!pathMounted(path)) {
+        ro = ",ro";
+      }
+      free(path);
       break;
     }
     if (!strcmp(wd, mO->peerDir)) {
-
-      /*
-       * Make sure that the peer is mounted before remounting it read-write.
-       */
-
-      chdir(mO->dir);
-      d = open(label, O_RDONLY);
-      close(d);
-      chdir(wd);
       remount(label, mO->dir);
       break;
     }

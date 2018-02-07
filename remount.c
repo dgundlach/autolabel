@@ -114,3 +114,20 @@ int devMounted(char *device) {
   endmntent(mounts);
   return rc;
 }
+
+int pathMounted(char *path) {
+
+  FILE *mounts;
+  struct mntent *ent;
+  int rc = 0;
+
+  mounts = setmntent(PROC_MOUNTS, "r");
+  while ((ent = getmntent(mounts))) {
+    if (!strcmp(ent->mnt_dir, path)) {
+      rc = 1;
+      break;
+    }
+  }
+  endmntent(mounts);
+  return rc;
+}
